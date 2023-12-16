@@ -139,3 +139,7 @@ async def delete_customer(customer_id: int):
 async def get_customers(skip: int = Query(default=0, ge=0), limit: int = Query(default=10, le=100)):
     customers = session.query(Customer).offset(skip).limit(limit).all()
     return customers
+
+
+# if __name__ == "__main__":
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
