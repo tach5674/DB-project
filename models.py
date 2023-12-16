@@ -50,6 +50,7 @@ class Customer(Base):
     age = Column(Integer)
     organisation = Column(String)
     preferences = Column(String)
+    weight = Column(Integer)
 
     dishes = relationship("Dish", secondary="orders", back_populates="customers")
 

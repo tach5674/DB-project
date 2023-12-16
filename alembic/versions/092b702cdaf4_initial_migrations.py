@@ -34,7 +34,6 @@ def upgrade() -> None:
     op.create_index(op.f('ix_dishes_id'), 'dishes', ['id'], unique=False)
     op.create_index(op.f('ix_dishes_name'), 'dishes', ['name'], unique=False)
     # ### end Alembic commands ###
-    op.add_column('customers', sa.Column('weight', sa.Integer, nullable=True))
 
 
 def downgrade() -> None:
@@ -53,4 +52,3 @@ def downgrade() -> None:
                type_=sa.TEXT(),
                existing_nullable=True)
     # ### end Alembic commands ###
-    op.drop_column('customers', 'weight')

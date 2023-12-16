@@ -94,9 +94,9 @@ async def get_dishes(skip: int = Query(default=0, ge=0), limit: int = Query(defa
 
 
 @app.post("/customers/add")
-async def add_customer(first_name: str, second_name: str, age: int, organisation: str, preferences: str):
+async def add_customer(first_name: str, second_name: str, age: int, organisation: str, preferences: str, weight: int):
     new_customer = Customer(first_name=first_name, second_name=second_name, age=age, organisation=organisation,
-                            preferences=preferences)
+                            preferences=preferences, weight=weight)
     session.add(new_customer)
     session.commit()
     return {"message": "Customer added successfully"}
@@ -112,7 +112,7 @@ async def get_customer_by_id(customer_id: int):
 
 @app.put("/customers/update/{customer_id}")
 async def update_customer(customer_id: int, first_name: str, second_name: str, age: int, organisation: str,
-                          preferences: str):
+                          preferences: str, weight: int):
     customer = session.query(Customer).filter(Customer.id == customer_id).first()
     if customer is None:
         raise HTTPException(status_code=404, detail="Customer not found")
@@ -121,6 +121,7 @@ async def update_customer(customer_id: int, first_name: str, second_name: str, a
     customer.age = age
     customer.organisation = organisation
     customer.preferences = preferences
+    customer.weight = weight
     session.commit()
     return customer
 
