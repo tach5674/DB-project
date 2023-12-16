@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Query
 from models import Order, Dish, Customer, session
+import uvicorn
 
 app = FastAPI()
 
@@ -142,5 +143,5 @@ async def get_customers(skip: int = Query(default=0, ge=0), limit: int = Query(d
     return customers
 
 
-# if __name__ == "__main__":
-#     uvicorn.run(app, host="0.0.0.0", port=8000)
+if __name__ == "__main__":
+    uvicorn.run(app, port=8000)
