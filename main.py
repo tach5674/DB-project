@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Query
 from models import Order, Dish, Customer, session
-from sqlalchemy import update
+from sqlalchemy import update, select, func
 import uvicorn
 
 app = FastAPI()
@@ -235,6 +235,24 @@ async def get_customers(page_num: int = 1, page_size: int = 10):
         response["pagination"]["next"] = f"/customers/get?page_num={page_num + 1}&page_size={page_size}"
 
     return response
+
+
+@app.get("/customers/orders")
+async def join_customers_orders():
+    results = (session.query(Order.dish_id, Customer.first_name, Dish.name)
+               .join(Dish, Order.dish_id == Dish.id)
+               .join(Customer, Order.customer_id == Customer.id).all())
+    for row in results:
+        print(f"Order ID: {row[0]}, Customer Name: {row[1]}, Dish Name: {row[2]}")
+    return
+
+
+@app.get("/dishes")
+async def group_by_category():
+    results = session.query(Dish.category, func.count(Dish.id)).group_by(Dish.category).all()
+    for row in results:
+        print(f'There are {row[1]} dishes in {row[0]} category.')
+    return
 
 
 if __name__ == "__main__":
