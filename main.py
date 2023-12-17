@@ -43,9 +43,33 @@ async def delete_order(dish_id: int, customer_id: int):
 
 
 @app.get("/orders/get")
-async def get_orders(skip: int = Query(default=0, ge=0), limit: int = Query(default=10, le=100)):
-    orders = session.query(Order).offset(skip).limit(limit).all()
-    return orders
+async def get_orders(page_num: int = 1, page_size: int = 10):
+    start = (page_num - 1) * page_size
+    end = start + page_size
+    data = session.query(Order).order_by(Order.dish_id, Order.customer_id).all()
+    data_length = len(data)
+    response = {
+        "data": data[start:end],
+        "total": data_length,
+        "count": page_size,
+        "pagination": {}
+    }
+    if end > data_length:
+        response["pagination"]["next"] = None
+
+        if page_num > 1:
+            response["pagination"]["previous"] = f"/orders/get?page_num={page_num - 1}&page_size={page_size}"
+        else:
+            response["pagination"]["previous"] = None
+    else:
+        if page_num > 1:
+            response["pagination"]["previous"] = f"/orders/get?page_num={page_num - 1}&page_size={page_size}"
+        else:
+            response["pagination"]["previous"] = None
+
+        response["pagination"]["next"] = f"/orders/get?page_num={page_num + 1}&page_size={page_size}"
+
+    return response
 
 
 @app.post("/dishes/add")
@@ -89,9 +113,33 @@ async def delete_dish(dish_id: int):
 
 
 @app.get("/dishes/get")
-async def get_dishes(skip: int = Query(default=0, ge=0), limit: int = Query(default=10, le=100)):
-    dishes = session.query(Dish).offset(skip).limit(limit).all()
-    return dishes
+async def get_dishes(page_num: int = 1, page_size: int = 10):
+    start = (page_num - 1) * page_size
+    end = start + page_size
+    data = session.query(Dish).order_by(Dish.id).all()
+    data_length = len(data)
+    response = {
+        "data": data[start:end],
+        "total": data_length,
+        "count": page_size,
+        "pagination": {}
+    }
+    if end > data_length:
+        response["pagination"]["next"] = None
+
+        if page_num > 1:
+            response["pagination"]["previous"] = f"/dishes/get?page_num={page_num - 1}&page_size={page_size}"
+        else:
+            response["pagination"]["previous"] = None
+    else:
+        if page_num > 1:
+            response["pagination"]["previous"] = f"/dishes/get?page_num={page_num - 1}&page_size={page_size}"
+        else:
+            response["pagination"]["previous"] = None
+
+        response["pagination"]["next"] = f"/dishes/get?page_num={page_num + 1}&page_size={page_size}"
+
+    return response
 
 
 @app.post("/customers/add")
@@ -138,9 +186,33 @@ async def delete_customer(customer_id: int):
 
 
 @app.get("/customers/get")
-async def get_customers(skip: int = Query(default=0, ge=0), limit: int = Query(default=10, le=100)):
-    customers = session.query(Customer).offset(skip).limit(limit).all()
-    return customers
+async def get_customers(page_num: int = 1, page_size: int = 10):
+    start = (page_num - 1) * page_size
+    end = start + page_size
+    data = session.query(Customer).order_by(Customer.id).all()
+    data_length = len(data)
+    response = {
+        "data": data[start:end],
+        "total": data_length,
+        "count": page_size,
+        "pagination": {}
+    }
+    if end > data_length:
+        response["pagination"]["next"] = None
+
+        if page_num > 1:
+            response["pagination"]["previous"] = f"/customers/get?page_num={page_num - 1}&page_size={page_size}"
+        else:
+            response["pagination"]["previous"] = None
+    else:
+        if page_num > 1:
+            response["pagination"]["previous"] = f"/customers/get?page_num={page_num - 1}&page_size={page_size}"
+        else:
+            response["pagination"]["previous"] = None
+
+        response["pagination"]["next"] = f"/customers/get?page_num={page_num + 1}&page_size={page_size}"
+
+    return response
 
 
 if __name__ == "__main__":
