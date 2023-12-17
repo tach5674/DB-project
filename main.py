@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Query
 from models import Order, Dish, Customer, session
+from sqlalchemy import update
 import uvicorn
 
 app = FastAPI()
@@ -139,6 +140,27 @@ async def get_dishes(page_num: int = 1, page_size: int = 10):
 
         response["pagination"]["next"] = f"/dishes/get?page_num={page_num + 1}&page_size={page_size}"
 
+    return response
+
+
+@app.put("/dishes/update")
+async def update_price_by_category(amount: float, category: str):
+    try:
+        session.execute(update(Dish).where(Dish.category == category).values(price=Dish.price + amount))
+        session.commit()
+        return {"message": f"Dishes from category: {category} price raised by {amount}"}
+    except Exception as e:
+        session.rollback()
+        return {"error": str(e)}
+
+
+@app.get("/dishes/select")
+async def get_dishes_by_price(price_from: int = 1, price_to: int = 30):
+    data = session.query(Dish).order_by(Dish.price).filter(price_from <= Dish.price, Dish.price <= price_to).all()
+    response = {
+        "data": data,
+        "total": len(data),
+    }
     return response
 
 
